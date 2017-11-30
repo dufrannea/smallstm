@@ -1,6 +1,9 @@
 package smallstm
 
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
+
+import scala.collection.immutable.SortedMap
 
 // We exclude the case in which refs are created when running the
 // futures (register cannot be called when runTransaction is)
@@ -10,8 +13,9 @@ object Engine {
   // do not use lock use synchronized
   //  private val transactionLock: Lock = new Object()
   private val runningTransactions = new ConcurrentHashMap[Transaction[_], Unit]()
+  private val globalVersion = new AtomicInteger(0)
 
-  private[smallstm] var refs = Map.empty[Ref,Int]
+  private[smallstm] var refs = SortedMap.empty[Ref,Int]
 
   // we need a structure to check what is ongoing
   def register(r: Ref, v: Int) = {
@@ -21,8 +25,6 @@ object Engine {
   }
 
   def runTransaction[T](t: Transaction[T]) : T = {
-    import scala.collection.JavaConversions._
-
     var done = false
     var result: Option[T] = None
 

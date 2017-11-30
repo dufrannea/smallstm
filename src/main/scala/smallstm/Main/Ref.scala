@@ -1,6 +1,11 @@
 package smallstm
 
+import java.util.concurrent.locks.ReentrantLock
+import javax.management.monitor.Monitor
+
 class Ref private(value: Int) {
+  val refLock = new ReentrantLock()
+
   def set(value:Int)(implicit transactionExecutor: TransactionExecutor[_]) : Unit = {
     transactionExecutor.write(this, value)
   }
