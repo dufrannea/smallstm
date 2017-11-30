@@ -1,4 +1,4 @@
-name := "Postaggoid"
+name := "Smallstm"
 
 version := "1.0"
 
