@@ -2,9 +2,14 @@ name := "Smallstm"
 
 version := "1.0"
 
-scalaVersion := "2.12.1"
+val dottyVersion = "0.5.0-RC1"
+// val scala212Version = "2.11.11"
 
-libraryDependencies += "org.scala-lang" % "scala-xml" % "2.11.0-M4"
-libraryDependencies += "org.typelevel" %% "cats-core" % "1.0.0-MF"
-
-        
+lazy val root = (project in file(".")).
+  settings(
+    name := "dotty-simple",
+    version := "0.1.0",
+    scalaVersion := dottyVersion,
+    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
+    //, crossScalaVersions := Seq(dottyVersion, scala212Version)
+  )
