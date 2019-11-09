@@ -1,13 +1,12 @@
-name := "Smallstm"
+val dottyVersion = "0.20.0-RC1"
 
-version := "1.0"
+lazy val root = project
+  .in(file("."))
+  .settings(
+    name := "dotty-simple",
+    version := "0.1.0",
 
-val dottyVersion = "0.5.0-RC1"
-// val scala212Version = "2.11.11"
+    scalaVersion := dottyVersion,
 
-lazy val root = (project in file(".")).settings(
-  name := "dotty-simple",
-  version := "0.1.0",
-  scalaVersion := dottyVersion,
-  libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
-)
+    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
+  )

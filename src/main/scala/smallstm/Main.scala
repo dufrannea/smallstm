@@ -1,10 +1,10 @@
-package smallstm.Main
+package smallstm
 
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 import java.util.concurrent.atomic.{AtomicLong, AtomicReference, LongAdder}
 import java.util.concurrent.locks.ReentrantLock
 
-import smallstm.Main.Common.{Block, RefSortKey, Value, Version}
+import smallstm.Common.{Block, RefSortKey, Value, Version}
 
 import scala.annotation.tailrec
 import scala.collection.mutable
@@ -39,7 +39,7 @@ object Engine {
 
     var done = false
     var result: Option[T] = None
-    var LeftRetries = 1000
+    var LeftRetries = 10000
 
     while (!done && LeftRetries > 0) {
       val transaction = Transaction(t)
@@ -100,7 +100,7 @@ class Ref private (initialValue: Int) {
 case class Transaction[T](block: Block[T]) {
   import TransactionOutcome._
 
-  val LockAcquireTimeoutMilliseconds = 100
+  val LockAcquireTimeoutMilliseconds = 500L
   val readVersion = Engine.globalVersionNumber.get()
 
   def commit(): TransactionOutcome = {
@@ -147,6 +147,7 @@ case class Transaction[T](block: Block[T]) {
 
       if (isReadSetValid) {
         acquiredLocks.foreach(ref => ref.writeLock.unlock())
+        println(s"${Thread.currentThread.getName} rollbacked")
         TransactionRollbacked
       } else {
         writeSet.foreach {
@@ -155,6 +156,7 @@ case class Transaction[T](block: Block[T]) {
           }
         }
         acquiredLocks.foreach(ref => ref.writeLock.unlock())
+        println(s"${Thread.currentThread.getName} commited")
         TransactionCommited
       }
     }
